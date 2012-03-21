@@ -133,7 +133,7 @@ sub growl {
 		description => $message,
 		priority => 2,
 		sticky => $sticky,
-		password => 'smirk',
+		password => $config{'growl_password'},
 	);
 }
 
