@@ -55,7 +55,7 @@ use strict;
 use vars qw($VERSION %IRSSI);
 use lib '/Library/Perl/5.10.0';
 
-use Net::Growl;
+use Growl::GNTP;
 
 use Irssi;
 $VERSION = '0.1';
@@ -93,11 +93,15 @@ $config{'growl_sticky'} ||= undef;
 # Register With Growl
 #--------------------------------------------------------------------
 
-register(
-	host => $config{'growl_host'},
-	application => 'irssi',
-	password => $config{'growl_password'},
+my $growl = Growl::GNTP->new(
+	AppName => 'irssi-growler',
+#	Password => $config{'growl_password'},
 );
+
+$growl->register([{
+	Name => 'irssi',
+	Enabled => 'True',
+}]);
 
 #--------------------------------------------------------------------
 # Private message parsing
@@ -127,13 +131,12 @@ sub hilight {
 
 sub growl {
 	my($nick, $message, $sticky) = @_;
-	notify(
-		application => 'irssi',
-		title => $nick,
-		description => $message,
-		priority => 2,
-		sticky => $sticky,
-		password => $config{'growl_password'},
+	$growl->notify(
+		Event => 'irssi',
+		Title => $nick,
+		Message => $message,
+		Sticky => $sticky,
+		Priority => 2,
 	);
 }
 
